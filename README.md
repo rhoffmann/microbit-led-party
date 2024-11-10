@@ -4,6 +4,16 @@ assuming microbit:v2
 
 `cargo embed --target thumbv7em-none-eabihf`
 
+release 
+
+`cargo embed --target thumbv7em-none-eabihf --relase`
+
+inspect size
+
+`cargo size -- -A`
+`cargo size --release -- -A`
+
+
 # debug
 
 ```
