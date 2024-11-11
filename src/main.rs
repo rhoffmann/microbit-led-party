@@ -13,7 +13,8 @@ mod uart;
 fn main() -> ! {
     rtt_init_print!();
 
-    uart::send_byte();
+    // uart::send_bytes(b"The quizck brown fox jumps over the lazy dog.");
+    uart::write("Hello, World!");
     // led_party::led_loop()
 
     loop {}
