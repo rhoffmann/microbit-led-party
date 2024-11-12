@@ -6,15 +6,16 @@ use panic_rtt_target as _;
 use rtt_target::rtt_init_print;
 
 mod led_party;
+mod serial;
 mod serial_setup;
-mod uart;
 
 #[entry]
 fn main() -> ! {
     rtt_init_print!();
 
-    // uart::send_bytes(b"The quizck brown fox jumps over the lazy dog.");
-    uart::write("Hello, World!");
+    let mut serial = serial::Serial::new();
+    serial.send_bytes(b"Hello");
+    serial.echo_server();
     // led_party::led_loop()
 
     loop {}
