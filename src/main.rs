@@ -14,8 +14,9 @@ fn main() -> ! {
     rtt_init_print!();
 
     let mut serial = serial::Serial::new();
-    serial.send_bytes(b"Hello");
-    serial.echo_server();
+    // serial.send_bytes(b"Hello");
+    // serial.echo_server();
+    serial.reverse_string();
     // led_party::led_loop()
 
     loop {}

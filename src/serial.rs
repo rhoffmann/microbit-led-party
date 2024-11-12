@@ -1,4 +1,5 @@
 use core::fmt::Write;
+use heapless::Vec;
 use microbit::hal::prelude::*;
 use microbit::hal::uarte;
 use microbit::hal::uarte::Baudrate;
@@ -11,13 +12,14 @@ use crate::serial_setup::UartePort;
 
 pub struct Serial {
     port: UartePort<UARTE0>,
+    buffer: Vec<u8, 32>,
 }
 
 impl Serial {
     pub fn new() -> Self {
         let board = microbit::Board::take().unwrap();
 
-        let mut serial = {
+        let port = {
             let serial = uarte::Uarte::new(
                 board.UARTE0,
                 board.uart.into(),
@@ -27,7 +29,10 @@ impl Serial {
             UartePort::new(serial)
         };
 
-        Serial { port: serial }
+        Serial {
+            port,
+            buffer: Vec::new(),
+        }
     }
 
     pub fn echo_server(&mut self) -> ! {
@@ -49,7 +54,25 @@ impl Serial {
         write!(self.port, "{}", text).unwrap();
     }
 
-    pub fn reverse_string() -> ! {
-        loop {}
+    pub fn reverse_string(&mut self) -> ! {
+        loop {
+            self.buffer.clear();
+            loop {
+                let byte = nb::block!(self.port.read()).unwrap();
+
+                if self.buffer.push(byte).is_err() {
+                    write!(self.port, "error: buffer full\r\n").unwrap();
+                    break;
+                }
+
+                if byte == 13 {
+                    for byte in self.buffer.iter().rev().chain(&[b'\n', b'\r']) {
+                        nb::block!(self.port.write(*byte)).unwrap();
+                    }
+                    break;
+                }
+            }
+            nb::block!(self.port.flush()).unwrap();
+        }
     }
 }
