@@ -1,5 +1,5 @@
-# [default.probe]
-# protocol = "Swd"
+[default.probe]
+protocol = "Swd"
 
 [default.general]
 chip = "nrf52833_xxAA" #  micro:bit V2

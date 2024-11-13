@@ -19,7 +19,9 @@ fn main() -> ! {
     // serial.echo_server();
     // serial.reverse_string();
     // led_party::led_loop()
-    i2c::reat_acc_magneto();
+    // i2c::read_accelero_magneto();
+    // i2c::read_with_lsm303();
+    i2c::read_with_command();
 
     loop {}
 }
