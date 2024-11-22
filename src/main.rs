@@ -5,6 +5,7 @@ use cortex_m_rt::entry;
 use panic_rtt_target as _;
 use rtt_target::rtt_init_print;
 
+pub mod compass;
 mod i2c;
 mod led_party;
 mod serial;
@@ -20,8 +21,9 @@ fn main() -> ! {
     // serial.reverse_string();
     // led_party::led_loop()
     // i2c::read_accelero_magneto();
-    // i2c::read_with_lsm303();
-    i2c::read_with_command();
-
-    loop {}
+    // i2c::read_accel_loop();
+    // i2c::read_magneto_loop();
+    // i2c::read_with_command();
+    compass::run()
+    // loop {}
 }

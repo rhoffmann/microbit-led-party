@@ -33,7 +33,7 @@ pub fn read_accelero_magneto() {
     rprintln!("The magnetometer chip's ID is: {:#b}", mag[0]);
 }
 
-pub fn read_with_lsm303() {
+pub fn read_accel_loop() {
     let board = Board::take().unwrap();
 
     let i2c = { twim::Twim::new(board.TWIM0, board.i2c_internal.into(), FREQUENCY_A::K100) };
@@ -46,6 +46,26 @@ pub fn read_with_lsm303() {
         if sensor.accel_status().unwrap().xyz_new_data {
             let data = sensor.accel_data().unwrap();
             rprintln!("Acceleration: x {} y {} z {}", data.x, data.y, data.z);
+        }
+    }
+}
+
+pub fn read_magneto_loop() {
+    let board = Board::take().unwrap();
+
+    let i2c = { twim::Twim::new(board.TWIM0, board.i2c_internal.into(), FREQUENCY_A::K100) };
+
+    let mut sensor = Lsm303agr::new_with_i2c(i2c);
+    sensor.init().unwrap();
+    sensor
+        .set_mag_odr(lsm303agr::MagOutputDataRate::Hz50)
+        .unwrap();
+    let mut sensor = sensor.into_mag_continuous().ok().unwrap();
+
+    loop {
+        if sensor.mag_status().unwrap().xyz_new_data {
+            let data: lsm303agr::Measurement = sensor.mag_data().unwrap();
+            rprintln!("Magnetometer: x {} y {} z {}", data.x, data.y, data.z);
         }
     }
 }

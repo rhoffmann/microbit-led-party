@@ -4,7 +4,7 @@ assuming microbit:v2
 
 `cargo embed --target thumbv7em-none-eabihf`
 
-release 
+release
 
 `cargo embed --target thumbv7em-none-eabihf --relase`
 
@@ -37,6 +37,24 @@ info locals
 monitor reset
 ```
 
+### add udev role to allow user access to usb device
+
+create `/etc/udev/rules.d/69-microbit.rules`
+
+```
+# CMSIS-DAP for microbit
+ACTION!="add|change", GOTO="microbit_rules_end"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0d28", ATTR{idProduct}=="0204", TAG+="uaccess"
+LABEL="microbit_rules_end"
+```
+
+`sudo udevadm control --reload`
+
+check: `lsusb | grep -i "NXP ARM mbed"`
+check: `getfacl /dev/bus/usb/001/<deviceId>`
+check: `probe-rs list` / `probe-rs info`
+
+
 # start minicom for serial communication
 
 create `~/.minirc.dfl`
@@ -50,16 +68,9 @@ pu xonxoff No
 ```
 
 sudo seems necessary, not sure why udev rules do not apply
-`sudo minicom -D /dev/ttyACM0 -b 115200` 
+`sudo minicom -D /dev/ttyACM0 -b 115200`
 
-**before anything usb**
-create `/etc/udev/rules.d/69-microbit.rules`
+## calibration data
+```rust
+Calibration { center: Measurement { x: -17958, y: 59636, z: -146622 }, scale: Measurement { x: 1105, y: 1082, z: 1116 }, radius: 39793 }
 ```
-# CMSIS-DAP for microbit
-ACTION!="add|change", GOTO="microbit_rules_end"
-SUBSYSTEM=="usb", ATTR{idVendor}=="0d28", ATTR{idProduct}=="0204", TAG+="uaccess"
-LABEL="microbit_rules_end"
-```
-
-`sudo udevadm control --reload`
-
