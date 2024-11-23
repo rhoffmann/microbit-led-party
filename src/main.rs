@@ -1,3 +1,4 @@
+#![deny(unused_unsafe)]
 #![no_main]
 #![no_std]
 
@@ -6,6 +7,7 @@ use panic_rtt_target as _;
 use rtt_target::rtt_init_print;
 
 pub mod compass;
+mod gravity;
 mod i2c;
 mod led_party;
 mod serial;
@@ -24,6 +26,7 @@ fn main() -> ! {
     // i2c::read_accel_loop();
     // i2c::read_magneto_loop();
     // i2c::read_with_command();
-    compass::run()
+    // compass::run();
+    gravity::punch_o_meter()
     // loop {}
 }
